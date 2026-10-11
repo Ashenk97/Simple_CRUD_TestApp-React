@@ -13,6 +13,10 @@ const db = mysql.createConnection({
   database: "sugarlabdb",
 });
 
+db.on("error", (err) => {
+  console.error("Database connection error:", err.code || err.message);
+});
+
 app.post("/create", (req, res) => {
   const name = req.body.name;
   const age = req.body.age;
@@ -26,6 +30,7 @@ app.post("/create", (req, res) => {
     (err, result) => {
       if (err) {
         console.log(err);
+        res.status(500).send("Database error");
       } else {
         res.send("Values Inserted");
       }
@@ -37,6 +42,7 @@ app.get("/employees", (req, res) => {
   db.query("SELECT * FROM employees", (err, result) => {
     if (err) {
       console.log(err);
+      res.status(500).send("Database error");
     } else {
       res.send(result);
     }
@@ -52,6 +58,7 @@ app.put("/update", (req, res) => {
     (err, result) => {
       if (err) {
         console.log(err);
+        res.status(500).send("Database error");
       } else {
         res.send(result);
       }
@@ -64,6 +71,7 @@ app.delete("/delete/:id", (req, res) => {
   db.query("DELETE FROM employees WHERE id = ?", id, (err, result) => {
     if (err) {
       console.log(err);
+      res.status(500).send("Database error");
     } else {
       res.send(result);
     }
